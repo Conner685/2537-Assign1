@@ -66,7 +66,7 @@ app.use(session({
 app.get('/', (req, res) => {
   if (req.session.authenticated) {
     res.send(`
-      <h1>Hello ${req.session.username}!</h1>
+      <h1>Hello ${req.session.name}!</h1>
       <a href="/members">Members Area</a><br>
       <a href="/logout">Logout</a>
     `);
@@ -154,9 +154,10 @@ app.get('/login', (req,res) => {
     var html = `
     log in
     <form action='/loggingin' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <input name='password' type='password' placeholder='password'>
+    <input name='username' type='email' placeholder='Email' required>
+    <input name='password' type='password' placeholder='Password' required>
     <button>Submit</button>
+    <a href='/'>Back to Home</a>
     </form>
     `;
     res.send(html);
@@ -199,7 +200,7 @@ app.post('/submitUser', async (req,res) => {
       });
 
       req.session.authenticated = true;
-      req.session.username = email; 
+      req.session.email = email; 
       req.session.name = name; 
       req.session.cookie.maxAge = expireTime;
       
@@ -213,41 +214,40 @@ app.post('/submitUser', async (req,res) => {
   }
 });
 
-app.post('/loggingin', async (req,res) => {
-    var username = req.body.username;
-    var password = req.body.password;
+app.post('/loggingin', async (req, res) => {
+  const email = req.body.username;  // form field is still named 'username'
+  const password = req.body.password;
 
-	const schema = Joi.string().max(20).required();
-	const validationResult = schema.validate(username);
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/login");
-	   return;
-	}
+  const schema = Joi.string().email().required();
+  const validationResult = schema.validate(email);
+  if (validationResult.error != null) {
+      console.log(validationResult.error);
+      res.redirect("/login");
+      return;
+  }
 
-	const result = await userCollection.find({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
+  const result = await userCollection.find({ email }).project({ name: 1, email: 1, password: 1, _id: 1 }).toArray();
 
-	console.log(result);
-	if (result.length != 1) {
-		console.log("user not found");
-		res.redirect("/login");
-		return;
-	}
-	if (await bcrypt.compare(password, result[0].password)) {
-		console.log("correct password");
-		req.session.authenticated = true;
-		req.session.username = username;
-		req.session.cookie.maxAge = expireTime;
+  if (result.length !== 1) {
+      console.log("user not found");
+      res.redirect("/login");
+      return;
+  }
 
-		res.redirect('/members');
-		return;
-	}
-	else {
-		console.log("incorrect password");
-		res.redirect("/login");
-		return;
-	}
+  if (await bcrypt.compare(password, result[0].password)) {
+      console.log("correct password");
+      req.session.authenticated = true;
+      req.session.name = result[0].name;
+      req.session.email = email;
+      req.session.cookie.maxAge = expireTime;
+
+      res.redirect('/members');
+  } else {
+      console.log("incorrect password");
+      res.redirect("/login");
+  }
 });
+
 
 
 app.get('/logout', (req,res) => {
