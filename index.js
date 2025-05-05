@@ -63,6 +63,12 @@ app.use(session({
   cookie: { maxAge: expireTime, httpOnly: true }
 }));
 
+function sessionValidation() {
+  if (!req.session.authenticated) {
+    res.redirct('/')
+  }
+}
+
 app.get('/', (req, res) => {
   if (req.session.authenticated) {
     res.send(`
@@ -103,17 +109,6 @@ app.get('/nosql-injection', async (req,res) => {
 
     res.send(`<h1>Hello ${username}</h1>`);
 });
-
-app.post('/submitEmail', (req,res) => {
-    var email = req.body.email;
-    if (!email) {
-        res.redirect('/contact?missing=1');
-    }
-    else {
-        res.send("Thanks for subscribing with your email: "+email);
-    }
-});
-
 
 app.get('/createUser', (req,res) => {
   var html = `
@@ -229,7 +224,7 @@ app.post('/loggingin', async (req, res) => {
 
 app.get('/logout', (req,res) => {
 	req.session.destroy();
-    res.redirect('/');
+  res.redirect('/');
 });
 
 app.get('/members', (req, res) => {
