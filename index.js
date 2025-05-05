@@ -104,27 +104,6 @@ app.get('/nosql-injection', async (req,res) => {
     res.send(`<h1>Hello ${username}</h1>`);
 });
 
-app.get('/about', (req,res) => {
-    var color = req.query.color;
-
-    res.send("<h1 style='color:"+color+";'>Patrick Guichon</h1>");
-});
-
-app.get('/contact', (req,res) => {
-    var missingEmail = req.query.missing;
-    var html = `
-        email address:
-        <form action='/submitEmail' method='post'>
-            <input name='email' type='text' placeholder='email'>
-            <button>Submit</button>
-        </form>
-    `;
-    if (missingEmail) {
-        html += "<br> email is required";
-    }
-    res.send(html);
-});
-
 app.post('/submitEmail', (req,res) => {
     var email = req.body.email;
     if (!email) {
@@ -177,8 +156,8 @@ app.post('/submitUser', async (req,res) => {
       const errorMessage = validationResult.error.details[0].message;
       res.send(`
           <h1>Error: ${errorMessage}</h1>
-          <a href="/createUser">Try again</a>
-      `);
+          <a href="/createUser">Try again</a>`
+        );
       return;
   }
 
@@ -186,8 +165,8 @@ app.post('/submitUser', async (req,res) => {
   if (existingUser) {
       res.send(`
           <h1>Error: Email already registered</h1>
-          <a href="/createUser">Try again</a>
-      `);
+          <a href="/createUser">Try again</a>`
+        );
       return;
   }
 
@@ -248,8 +227,6 @@ app.post('/loggingin', async (req, res) => {
   }
 });
 
-
-
 app.get('/logout', (req,res) => {
 	req.session.destroy();
     res.redirect('/');
@@ -260,30 +237,15 @@ app.get('/members', (req, res) => {
       return res.redirect('/');
   }
 
-  const images = ['image1.jpg', 'image2.jpg', 'image3.jpg'];
+  const images = ['Ugly_fish.jpg', 'Surprise_Fish.png', 'Dotted_fish.webp'];
   const randomImage = images[Math.floor(Math.random() * images.length)];
 
   res.send(`
       <h1>Hello, ${req.session.name}!</h1>
-      <img src="/images/${randomImage}" alt="Random image" style="max-width: 500px;"><br>
+      <img src="/${randomImage}" alt=${randomImage} style="max-width: 500px;"><br>
       <a href="/">Home</a> | 
-      <a href="/logout">Logout</a>
-  `);
-});
-
-app.get('/cat/:id', (req,res) => {
-
-    var cat = req.params.id;
-
-    if (cat == 1) {
-        res.send("Fluffy: <img src='/fluffy.gif' style='width:250px;'>");
-    }
-    else if (cat == 2) {
-        res.send("Socks: <img src='/socks.gif' style='width:250px;'>");
-    }
-    else {
-        res.send("Invalid cat id: "+cat);
-    }
+      <a href="/logout">Logout</a>`
+    );
 });
 
 app.use((req, res) => {
