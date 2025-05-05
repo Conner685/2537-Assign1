@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/Conner685/2537-Assign1/issues"
   },
-  "homepage": "https://github.com/Conner685/2537-Assign1#readme"
+  "homepage": "https://github.com/Conner685/2537-Assign1#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.5.0",
+    "express-session": "^1.18.1",
+    "joi": "^17.13.3",
+    "node": "^22.15.0"
+  }
 }
