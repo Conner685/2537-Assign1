@@ -63,12 +63,6 @@ app.use(session({
   cookie: { maxAge: expireTime, httpOnly: true }
 }));
 
-function sessionValidation() {
-  if (!req.session.authenticated) {
-    res.redirct('/')
-  }
-}
-
 app.get('/', (req, res) => {
   if (req.session.authenticated) {
     res.send(`
