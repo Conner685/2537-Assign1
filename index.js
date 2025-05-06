@@ -172,7 +172,7 @@ app.post('/submitUser', async (req,res) => {
       req.session.name = name; 
       req.session.cookie.maxAge = expireTime;
       
-      res.redirect('/members');
+      res.redirect('/');
   } catch (error) {
       console.error('Error creating user:', error);
       res.send(`
@@ -209,7 +209,7 @@ app.post('/loggingin', async (req, res) => {
       req.session.email = email;
       req.session.cookie.maxAge = expireTime;
 
-      res.redirect('/members');
+      res.redirect('/');
   } else {
       console.log("incorrect password");
       res.redirect("/login");
