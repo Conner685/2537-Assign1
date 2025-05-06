@@ -197,7 +197,7 @@ app.post('/loggingin', async (req, res) => {
   const result = await userCollection.find({ email }).project({ name: 1, email: 1, password: 1, _id: 1 }).toArray();
 
   if (result.length !== 1) {
-      console.log("user not found");
+      alert("user not found");
       res.redirect("/login");
       return;
   }
@@ -211,7 +211,7 @@ app.post('/loggingin', async (req, res) => {
 
       res.redirect('/');
   } else {
-      console.log("incorrect password");
+      alert("incorrect password");
       res.redirect("/login");
   }
 });
